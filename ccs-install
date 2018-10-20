@@ -1,0 +1,77 @@
+#!/bin/bash
+
+#
+# This bash script installs a function in the .bash_profile to aid with quick access to 
+#   csil among other useful features.
+# It is highly customizable. In order to add new functions, you must go into .bash_profile
+#   and add bash code to the function, in the form of an if statement:
+#
+# if [ "\$1" == <function name> ]; then
+#     <code goes here>
+#     return;
+# fi
+#
+# Installer might fail if the .bash_profile does not exist. You can create one with this 
+#   command:
+# 
+# $ touch ~/.bash_profile
+#
+# Contact bdarnell@ucsb.edu for further assistance.
+#
+
+
+CODE=$(cat <<-END
+
+#################################
+###  CREATED BY CCS-INSTALL:  ###
+#################################
+
+ccs() {
+    if [ "\$#" -ne 1 ]; then
+        echo "Usage: ccs <function>"
+        return;
+    fi
+    
+    if [ "\$1" == "help" ]; then
+        echo "Usage: ccs <function>"
+        echo "Function list:"
+        echo "    help     --> display list of functions and usage"
+        echo "    1        --> launch CMPTGCS 1A"
+        return;
+        return;
+    fi
+    
+    # commands for CMPTGCS 1A:
+    if [ "\$1" == 1 ]; then 
+        open -a "/Applications/Google Chrome.app" https://ucsb-cmptgcs1a-cmpsc24a-f18.github.io/
+        # replace with 'Google Chrome', 'Firefox', 'Safari', etc.
+        ssh bdarnell@csil-42.cs.ucsb.edu   # replace username and csil #
+        return;
+    fi
+    
+    # default case:
+    echo "ccs: function \$1 is not yet defined."
+}
+
+#################################
+###        END OF CODE        ###
+#################################
+
+END)
+
+# touch, in case .bash_profile does not exist
+touch ~/.bash_profile
+
+# essentially, importing .bash_profile
+source ~/.bash_profile
+
+# test if ccs is a function
+if [ "$(declare -f ccs > /dev/null; echo $?)" -eq 1 ]; then
+    echo "$CODE" >>~/.bash_profile
+    echo "Installation successful."
+else
+    echo "Installation prevented: alias \"ccs\" already exists in .bash_profile"
+fi
+
+
+
